@@ -13,7 +13,10 @@ Shader "Custom/RenderTextureTest" {
 			#pragma fragment frag
 			
 			sampler2D _MainTex;
+			float4 _MainTex_ST;
 			
+			#include "UnityCG.cginc"
+
 			struct a2v {
 				float4 vertex : POSITION;
 				float4 texcoord : TEXCOORD0;
@@ -27,15 +30,15 @@ Shader "Custom/RenderTextureTest" {
 			v2f vert(a2v v) {
 				v2f o;
 				o.pos = UnityObjectToClipPos(v.vertex);
+				o.uv.xy = TRANSFORM_TEX(v.texcoord, _MainTex);
 				
-				o.uv = v.texcoord;
 				// Mirror needs to filp x
 				
 				return o;
 			}
 			
 			fixed4 frag(v2f i) : SV_Target {
-				return tex2Dproj(_MainTex, i.uv);
+				return tex2D(_MainTex, i.uv.xy);
 			}
 			ENDCG
 			
